@@ -1,1 +1,192 @@
 @import "tailwindcss";
+
+@theme {
+  --color-ink: #0b0d12;
+  --color-coal: #12151c;
+  --color-slab: #1a1e27;
+  --color-bone: #e9e4d8;
+  --color-dim: #8e939d;
+  --color-fog: #c9cdd4;
+  --color-ember: #ff5b1f;
+  --color-harbor: #3f6ad8;
+  --color-mint: #3ac47d;
+  --color-ambery: #f5b72f;
+
+  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-body: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "Space Mono", "Courier New", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-ink);
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-ember);
+  color: var(--color-ink);
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-ink); }
+::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-ember); }
+
+/* ---------- ambient layers ---------- */
+.noise-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(to right, rgba(233, 228, 216, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(233, 228, 216, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.dot-field {
+  background-image: radial-gradient(rgba(233, 228, 216, 0.22) 1px, transparent 1.4px);
+  background-size: 14px 14px;
+}
+
+/* ---------- marquee ---------- */
+@keyframes mq {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes mq-rev {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.marquee { overflow: hidden; }
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: mq var(--mq-dur, 34s) linear infinite;
+}
+.marquee-track.rev { animation-name: mq-rev; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* ---------- ken burns ---------- */
+@keyframes kenburns {
+  from { transform: scale(1.06) translate(0, 0); }
+  to { transform: scale(1.18) translate(-1.6%, -1.4%); }
+}
+.kenburns { animation: kenburns 22s ease-in-out infinite alternate; will-change: transform; }
+
+/* ---------- clouds / drift ---------- */
+@keyframes drift {
+  from { transform: translateX(-6%); }
+  to { transform: translateX(6%); }
+}
+.cloud-drift { animation: drift var(--drift-dur, 16s) ease-in-out infinite alternate; }
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.blink-dot { animation: blink-dot 1.6s ease-in-out infinite; }
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.float-y { animation: float-y 5s ease-in-out infinite; }
+
+/* ---------- scroll reveal ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s cubic-bezier(0.19, 1, 0.22, 1), transform 0.9s cubic-bezier(0.19, 1, 0.22, 1);
+  transition-delay: var(--rv-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal="left"] { transform: translateX(-40px); }
+[data-reveal="right"] { transform: translateX(40px); }
+[data-reveal="scale"] { transform: scale(0.94); }
+[data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* masked line reveal (hero / headings) */
+.mask-line { display: block; overflow: hidden; }
+.mask-line > span {
+  display: block;
+  transform: translateY(115%);
+  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+  transition-delay: var(--rv-delay, 0ms);
+  will-change: transform;
+}
+.revealed .mask-line > span,
+.mask-line.revealed > span { transform: translateY(0); }
+
+/* ---------- buttons ---------- */
+.btn-fill { position: relative; overflow: hidden; isolation: isolate; }
+.btn-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--btn-fill, var(--color-ember));
+  transform: translateY(101%);
+  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.btn-fill:hover::after { transform: translateY(0); }
+
+/* ---------- truck road dashes ---------- */
+@keyframes road-dash {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -120; }
+}
+.road-line { animation: road-dash 1.4s linear infinite; }
+.road-line.fast { animation-duration: 0.5s; }
+
+/* ---------- misc ---------- */
+.text-outline {
+  -webkit-text-stroke: 1px rgba(233, 228, 216, 0.32);
+  color: transparent;
+}
+.text-outline-ember {
+  -webkit-text-stroke: 1px rgba(255, 91, 31, 0.65);
+  color: transparent;
+}
+
+.img-duotone { filter: saturate(0.72) contrast(1.06) brightness(0.86); }
+
+details.faq-item summary::-webkit-details-marker { display: none; }
+
+/* FAQ height animation */
+.faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.faq-item.open .faq-body { grid-template-rows: 1fr; }
+.faq-body > div { overflow: hidden; }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+  .mask-line > span { transform: none; }
+  .kenburns, .marquee-track, .cloud-drift, .road-line { animation: none !important; }
+}
