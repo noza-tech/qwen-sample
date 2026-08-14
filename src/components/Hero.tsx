@@ -47,14 +47,14 @@ export default function Hero() {
       >
         <div className="mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.24em] text-ember">
           <span className="w-2 h-2 rounded-full bg-ember blink-dot" />
-          One operator · every leg of the journey
+          One operator · every mile accounted for
         </div>
 
         <MaskLines
           as="h1"
           stagger={110}
           lines={[
-            <>Every leg,</>,
+            <>Every mile,</>,
             <>
               one <span className="text-ember">crew.</span>
             </>,
@@ -64,9 +64,9 @@ export default function Hero() {
 
         <div className="mt-8 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <p className="max-w-md text-fog/90 text-base md:text-lg leading-relaxed">
-            Freight forwarding, customs brokerage and linehaul transport — unified
-            across APAC under one accountable team, from first pickup to final
-            proof of delivery.
+            Air, ocean, customs and road under a single APAC operator — so every
+            pickup, border crossing and handoff lands on one team's desk, with
+            one manifest to follow.
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <a

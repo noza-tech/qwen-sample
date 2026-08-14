@@ -126,8 +126,8 @@ function Cta() {
         </h2>
         <Reveal delay={350}>
           <p className="mx-auto mt-8 max-w-xl text-fog/85 text-lg leading-relaxed">
-            No call centres. No runaround. Experienced operators ready to price
-            your lane, plan the move and pick up the phone.
+            No phone trees, no passing the buck — experienced operators ready to
+            price your lane, plan the move and pick up the phone.
           </p>
         </Reveal>
         <Reveal delay={480} className="mt-10 flex flex-wrap justify-center gap-4">

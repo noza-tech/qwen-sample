@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MaskLines, Reveal, useInView } from "../lib/motion";
 import { IMG } from "../lib/images";
 
@@ -14,42 +13,42 @@ const SERVICES: Service[] = [
   {
     no: "01",
     title: "Air Freight",
-    desc: "Express, priority and deferred options across global trade lanes — managed end to end for speed and schedule integrity.",
+    desc: "Next-flight-out, priority and deferred air programmes on the lanes that matter — booked, tendered and tracked to the minute.",
     img: IMG.truckDawn,
-    tags: ["Next-flight-out", "Charter", "Consolidated"],
+    tags: ["NFO", "Charter", "Consolidated"],
   },
   {
     no: "02",
     title: "Ocean Freight",
-    desc: "FCL, LCL and specialised movements with structured carrier selection and routing, balancing cost against reliability.",
+    desc: "Full and part-container moves plus specialised equipment, with carrier tenders run for the right mix of rate and reliability.",
     img: IMG.ship,
     tags: ["FCL / LCL", "Reefer", "Breakbulk"],
   },
   {
     no: "03",
     title: "Customs Brokerage",
-    desc: "In-house licensed brokerage covering classification, compliance and biosecurity — full control, nothing outsourced.",
+    desc: "Our own licensed brokers handle classification, concessions and biosecurity in-house — nothing subcontracted, nothing guessed.",
     img: IMG.port,
-    tags: ["Licensed brokers", "Tariff mapping", "Quarantine"],
+    tags: ["Licensed", "Tariff mapping", "Quarantine"],
   },
   {
     no: "04",
     title: "Warehousing & 3PL",
-    desc: "Scalable storage, pick-and-pack and distribution, fully wired into your freight and transport operations.",
+    desc: "Bonded and ambient storage with pick-pack and distribution plugged straight into your inbound and outbound freight.",
     img: IMG.warehouse,
     tags: ["Pick & pack", "Inventory", "Distribution"],
   },
   {
     no: "05",
     title: "Project Cargo",
-    desc: "Specialist handling for out-of-gauge and complex shipments — permits, surveys and engineered load plans included.",
+    desc: "Out-of-gauge, heavy-lift and high-value moves — route surveys, permits and lift plans engineered before the cargo travels.",
     img: IMG.battery,
-    tags: ["OOG", "Heavy lift", "Route surveys"],
+    tags: ["OOG", "Heavy lift", "Surveys"],
   },
   {
     no: "06",
     title: "Domestic & Linehaul",
-    desc: "Metro, regional and interstate transport run to consistent service levels with full delivery visibility.",
+    desc: "Metro, regional and interstate runs held to fixed service levels, with live tracking published on every delivery.",
     img: IMG.containers,
     tags: ["FTL / LTL", "Interstate", "Last mile"],
   },
@@ -58,14 +57,14 @@ const SERVICES: Service[] = [
 function ServiceIcon({ i }: { i: number }) {
   const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   switch (i) {
-    case 0: // plane
+    case 0:
       return (
         <svg viewBox="0 0 32 32" className="w-8 h-8" {...common}>
           <path d="M3 19.5 29 8l-8.5 15.5-4.2-6.1z" />
           <path d="M16.3 17.4 29 8l-14 3.5" />
         </svg>
       );
-    case 1: // ship
+    case 1:
       return (
         <svg viewBox="0 0 32 32" className="w-8 h-8" {...common}>
           <path d="M4 21h24l-3 6H7z" />
@@ -73,7 +72,7 @@ function ServiceIcon({ i }: { i: number }) {
           <path d="M2.5 25.5c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0 4-1.6 6 0" opacity=".6" />
         </svg>
       );
-    case 2: // stamp / customs
+    case 2:
       return (
         <svg viewBox="0 0 32 32" className="w-8 h-8" {...common}>
           <path d="M12 14c0-4-3-4.5-3-8a7 7 0 0 1 14 0c0 3.5-3 4-3 8" />
@@ -81,21 +80,21 @@ function ServiceIcon({ i }: { i: number }) {
           <path d="M5 27h22" />
         </svg>
       );
-    case 3: // warehouse
+    case 3:
       return (
         <svg viewBox="0 0 32 32" className="w-8 h-8" {...common}>
           <path d="M3 27V12L16 5l13 7v15" />
           <path d="M9 27v-9h14v9M9 22h14M16 18v4" />
         </svg>
       );
-    case 4: // crane / project
+    case 4:
       return (
         <svg viewBox="0 0 32 32" className="w-8 h-8" {...common}>
           <path d="M5 28h22M8 28V9l14-4v23" />
           <path d="M8 9l14-4M22 12v4M22 16l-3 3h6zM19 24h6v4h-6z" />
         </svg>
       );
-    default: // truck
+    default:
       return (
         <svg viewBox="0 0 32 32" className="w-8 h-8" {...common}>
           <path d="M2 8h17v14H2zM19 12h6l4 5v5h-10" />
@@ -106,8 +105,7 @@ function ServiceIcon({ i }: { i: number }) {
   }
 }
 
-function ServicesList() {
-  const [active, setActive] = useState(0);
+function ServicesGrid() {
   return (
     <div id="services" className="relative scroll-mt-28 bg-coal border-y border-bone/10">
       <div className="max-w-[1500px] mx-auto px-5 md:px-10 py-24 md:py-32">
@@ -138,85 +136,53 @@ function ServicesList() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-          {/* list */}
-          <div className="order-2 lg:order-1">
-            {SERVICES.map((s, i) => (
-              <Reveal key={s.no} delay={i * 60}>
-                <button
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  onClick={() => setActive(i)}
-                  className={`group w-full text-left border-t border-bone/12 py-6 md:py-7 flex items-center gap-5 md:gap-8 transition-all duration-400 ${
-                    active === i ? "pl-3 md:pl-5" : "hover:pl-3"
-                  } ${i === SERVICES.length - 1 ? "border-b" : ""}`}
-                >
-                  <span className={`font-mono text-xs transition-colors ${active === i ? "text-ember" : "text-dim"}`}>{s.no}</span>
-                  <span className={`transition-colors duration-300 ${active === i ? "text-ember" : "text-fog group-hover:text-bone"}`}>
-                    <ServiceIcon i={i} />
-                  </span>
-                  <span className="flex-1">
-                    <span className={`block font-display uppercase text-2xl md:text-[2rem] leading-tight transition-colors ${active === i ? "text-bone" : "text-fog"}`}>
-                      {s.title}
-                    </span>
-                    <span className={`block mt-1.5 text-sm text-dim max-w-md leading-relaxed overflow-hidden transition-all duration-500 ${active === i ? "max-h-24 opacity-100" : "max-h-0 md:max-h-24 opacity-70 md:opacity-70"}`}>
-                      {s.desc}
-                    </span>
-                    <span className="mt-2.5 flex flex-wrap gap-2">
-                      {s.tags.map((t) => (
-                        <span key={t} className={`font-mono text-[9px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full border transition-colors duration-300 ${active === i ? "border-ember/60 text-ember" : "border-bone/15 text-dim"}`}>
-                          {t}
-                        </span>
-                      ))}
-                    </span>
-                  </span>
-                  <svg viewBox="0 0 16 16" className={`w-4 h-4 shrink-0 transition-all duration-300 ${active === i ? "text-ember translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`} fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <path d="M2 8h11M9 3.5 13.5 8 9 12.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </Reveal>
-            ))}
-            <Reveal delay={200} className="mt-8">
-              <a href="#contact" className="btn-fill inline-flex items-center gap-3 border border-bone/25 rounded-full px-7 py-4 font-mono text-xs uppercase tracking-[0.18em] text-bone hover:text-ink transition-colors duration-300">
-                Request a service breakdown
-                <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </a>
-            </Reveal>
-          </div>
-
-          {/* preview */}
-          <div className="order-1 lg:order-2 lg:sticky lg:top-28">
-            <Reveal dir="scale">
-              <div className="relative rounded-lg overflow-hidden border border-bone/12 aspect-[4/3] bg-slab">
-                {SERVICES.map((s, i) => (
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {SERVICES.map((s, i) => (
+            <Reveal key={s.no} delay={(i % 3) * 110}>
+              <article className="group relative h-full rounded-lg border border-bone/12 bg-ink overflow-hidden transition-all duration-500 hover:border-ember/60 hover:-translate-y-2">
+                <div className="relative h-44 md:h-52 overflow-hidden">
                   <img
-                    key={s.no}
                     src={s.img}
                     alt={s.title}
                     loading="lazy"
-                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 img-duotone ${
-                      active === i ? "opacity-100 scale-100" : "opacity-0 scale-[1.06]"
-                    }`}
+                    className="w-full h-full object-cover img-duotone scale-[1.04] transition-transform duration-[900ms] ease-out group-hover:scale-110"
                   />
-                ))}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between gap-4">
-                  <div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-ember mb-1.5">
-                      Service {SERVICES[active].no} / 06
-                    </div>
-                    <div className="font-display uppercase text-bone text-2xl md:text-3xl">{SERVICES[active].title}</div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent" />
+                  <span className="absolute top-4 left-4 font-mono text-[10px] uppercase tracking-[0.2em] text-bone/80 bg-ink/60 backdrop-blur-sm px-2.5 py-1 rounded-full border border-bone/15">
+                    {s.no}
+                  </span>
+                  <span className="absolute top-4 right-4 w-9 h-9 rounded-full grid place-items-center bg-ember text-ink opacity-0 translate-y-2 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0">
+                    <svg viewBox="0 0 16 16" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M3 13 13 3M6 3h7v7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+                <div className="p-6 md:p-7">
+                  <div className="flex items-center gap-3 text-ember mb-4">
+                    <ServiceIcon i={i} />
+                    <span className="h-px flex-1 bg-bone/10" />
                   </div>
-                  <div className="flex gap-1.5">
-                    {SERVICES.map((_, i) => (
-                      <button key={i} onClick={() => setActive(i)} aria-label={`Show service ${i + 1}`} className={`h-1.5 rounded-full transition-all duration-400 ${active === i ? "w-8 bg-ember" : "w-3 bg-bone/30 hover:bg-bone/60"}`} />
+                  <h3 className="font-display uppercase text-bone text-2xl md:text-[1.7rem] leading-tight">{s.title}</h3>
+                  <p className="mt-3 text-dim text-[15px] leading-relaxed">{s.desc}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {s.tags.map((t) => (
+                      <span key={t} className="font-mono text-[9px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full border border-bone/15 text-dim group-hover:border-ember/50 group-hover:text-ember transition-colors duration-400">
+                        {t}
+                      </span>
                     ))}
                   </div>
                 </div>
-              </div>
+              </article>
             </Reveal>
-          </div>
+          ))}
         </div>
+
+        <Reveal delay={150} className="mt-12 flex justify-center">
+          <a href="#contact" className="btn-fill inline-flex items-center gap-3 border border-bone/25 rounded-full px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-bone hover:text-ink transition-colors duration-300">
+            Our services in detail
+            <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </a>
+        </Reveal>
       </div>
     </div>
   );
@@ -227,7 +193,7 @@ function ServicesList() {
 const FEATURES = [
   {
     title: "Live milestone tracking",
-    desc: "Know exactly where your cargo stands at every checkpoint. Live visibility means faster decisions and zero guesswork.",
+    desc: "Every checkpoint is scanned and published to your dashboard — exceptions get flagged before they grow into delays.",
     icon: (
       <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="20" cy="17" r="9" />
@@ -239,7 +205,7 @@ const FEATURES = [
   },
   {
     title: "Network across the map",
-    desc: "From intra-Asia lanes to intercontinental corridors, our partner network spans every major route your business relies on.",
+    desc: "Owned offices plus vetted agents across APAC, Europe and the Americas — capacity on the lanes your volumes actually run.",
     icon: (
       <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="20" cy="20" r="15" />
@@ -250,7 +216,7 @@ const FEATURES = [
   },
   {
     title: "24/7 humans on the line",
-    desc: "Routine update or 2 a.m. emergency — a real person answers, takes the problem, and owns the outcome.",
+    desc: "Phones answered by the ops team, not a queue — and whoever picks up carries the issue through to resolution.",
     icon: (
       <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
         <path d="M8 22v-3a12 12 0 0 1 24 0v3" />
@@ -288,7 +254,6 @@ function Reliability() {
         </div>
       </div>
 
-      {/* ship image band */}
       <div ref={ref} className="relative h-[46vh] md:h-[62vh] overflow-hidden my-4">
         <img
           src={IMG.ship}
@@ -300,14 +265,8 @@ function Reliability() {
           <div className="max-w-[1500px] mx-auto w-full px-5 md:px-10">
             <MaskLines
               as="h3"
-              stagger={130}
-              className="font-display uppercase text-bone/95 text-4xl md:text-6xl xl:text-7xl leading-[0.95] max-w-3xl"
-              lines={[
-                <>Precision at</>,
-                <>
-                  every <span className="text-ember">milestone.</span>
-                </>,
-              ]}
+              className="font-display uppercase text-bone/95 leading-[0.95] text-4xl md:text-6xl xl:text-7xl max-w-3xl"
+              lines={[<>Precision at</>, <><span className="text-ember">every milestone.</span></>]}
             />
           </div>
         </div>
@@ -316,7 +275,6 @@ function Reliability() {
         </div>
       </div>
 
-      {/* feature trio */}
       <div className="max-w-[1500px] mx-auto px-5 md:px-10 pb-24 md:pb-32 pt-10">
         <div className="grid md:grid-cols-3 gap-5">
           {FEATURES.map((f, i) => (
@@ -327,7 +285,7 @@ function Reliability() {
                   <span className="text-ember">{f.icon}</span>
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">0{i + 1}</span>
                 </div>
-                <h3 className="font-display uppercase text-bone text-2xl md:text-[1.7rem] leading-tight mb-3">{f.title}</h3>
+                <h4 className="font-display uppercase text-bone text-2xl md:text-[1.7rem] leading-tight mb-3">{f.title}</h4>
                 <p className="text-dim leading-relaxed text-[15px]">{f.desc}</p>
                 <div className="mt-7 h-px bg-bone/10 relative overflow-hidden">
                   <div className="absolute inset-y-0 left-0 w-0 bg-ember transition-all duration-500 group-hover:w-full" />
@@ -344,7 +302,7 @@ function Reliability() {
 export default function Services() {
   return (
     <>
-      <ServicesList />
+      <ServicesGrid />
       <Reliability />
     </>
   );

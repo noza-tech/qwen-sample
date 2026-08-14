@@ -11,4 +11,5 @@ export const IMG = {
     "https://image.qwenlm.ai/generated-images/01b82c8b-00d4-4c51-b481-325362aecaef/_result.png",
   truckDawn:
     "https://image.qwenlm.ai/generated-images/95e04ae7-d771-4367-a278-024672f441bd/_result.png",
+  map: "https://image.qwenlm.ai/generated-images/3728bfbf-61c9-4fb3-8d15-7850edf74d39/_result.png",
 };
