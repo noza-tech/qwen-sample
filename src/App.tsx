@@ -10,6 +10,7 @@ import Services from "./components/Services";
 import WhyUsSection from "./components/WhyUs";
 import PartnersInsights from "./components/Partners";
 import Closing from "./components/Closing";
+import DownloadZip from "./components/DownloadZip";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,8 @@ export default function App() {
           </main>
         </>
       )}
+
+      <DownloadZip />
     </div>
   );
 }
