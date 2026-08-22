@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { downloadSourceZip } from "../lib/sourceZip";
 
 type Status = "idle" | "working" | "done" | "error";
 
@@ -18,7 +17,8 @@ export default function DownloadZip() {
     setStatus("working");
     setPct(0);
     try {
-      await downloadSourceZip(({ done, total }) => {
+      const { downloadSourceZip } = await import("../lib/sourceZip");
+      await downloadSourceZip(({ done, total }: { step: string; done: number; total: number }) => {
         setPct(Math.round((done / total) * 100));
       });
       setStatus("done");

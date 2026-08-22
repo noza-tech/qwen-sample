@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { MaskLines, Reveal, useClock, useInView } from "../lib/motion";
-import { downloadSourceZip } from "../lib/sourceZip";
 
 /* ---------------- FAQ ---------------- */
 
@@ -255,7 +254,11 @@ function Footer() {
           <span>© 2026 Meridian Carriers Pty Ltd · AFSL demo site</span>
           <button
             type="button"
-            onClick={() => downloadSourceZip().catch((e) => console.error(e))}
+            onClick={() =>
+              import("../lib/sourceZip")
+                .then((m) => m.downloadSourceZip())
+                .catch((e: unknown) => console.error(e))
+            }
             className="group inline-flex items-center gap-2 hover:text-ember transition-colors cursor-pointer"
             title="Download the full source code as a .zip"
           >
