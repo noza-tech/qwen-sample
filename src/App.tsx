@@ -1,5 +1,6 @@
 import { AnimatePresence } from "framer-motion";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { downloadSourceZip } from "./lib/sourceZip";
 import Preloader from "./components/Preloader";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -13,6 +14,21 @@ import Closing from "./components/Closing";
 export default function App() {
   const [loading, setLoading] = useState(true);
   const handleDone = useCallback(() => setLoading(false), []);
+
+  // Append ?zip to the URL to auto-download the full source archive.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("zip")) {
+      downloadSourceZip().catch((err) => console.error("Zip failed:", err));
+      params.delete("zip");
+      const next = params.toString();
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + (next ? `?${next}` : "")
+      );
+    }
+  }, []);
 
   return (
     <div className="bg-ink text-bone font-body">

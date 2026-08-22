@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MaskLines, Reveal, useClock, useInView } from "../lib/motion";
+import { downloadSourceZip } from "../lib/sourceZip";
 
 /* ---------------- FAQ ---------------- */
 
@@ -252,6 +253,17 @@ function Footer() {
 
         <div className="mt-8 pt-6 border-t border-bone/10 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
           <span>© 2026 Meridian Carriers Pty Ltd · AFSL demo site</span>
+          <button
+            type="button"
+            onClick={() => downloadSourceZip().catch((e) => console.error(e))}
+            className="group inline-flex items-center gap-2 hover:text-ember transition-colors cursor-pointer"
+            title="Download the full source code as a .zip"
+          >
+            <svg viewBox="0 0 16 16" className="w-3 h-3 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M8 2v9M4 7.5 8 11.5 12 7.5M2.5 14h11" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Download source (.zip)
+          </button>
           <span className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-mint blink-dot" />
             All lanes operational
