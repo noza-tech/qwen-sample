@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { buildSourceZip, type ZipResult } from "../lib/sourceZip";
+
+type ZipResult = {
+  url: string;
+  fileName: string;
+  embeddedImages: number;
+  skippedImages: number;
+  sizeKB: number;
+};
 
 type Status = "idle" | "working" | "done" | "error";
 
@@ -31,9 +38,11 @@ export default function DownloadZip() {
     setStep("Preparing…");
     setOpen(true);
     try {
-      // 1 — build the archive entirely locally (imagery is best-effort).
+      // 1 — load the zip tooling on demand (small, dependency-free chunk),
+      // then build the archive entirely locally (imagery is best-effort).
+      const { buildSourceZip } = await import("../lib/sourceZip");
       const { blob, embeddedImages, skippedImages } = await buildSourceZip(
-        ({ step: s, done, total }) => {
+        ({ step: s, done, total }: { step: string; done: number; total: number }) => {
           setStep(s);
           setPct(Math.max(4, Math.round((done / total) * 96)));
         }
