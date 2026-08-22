@@ -1,4 +1,4 @@
-import JSZip from "jszip";
+import { ZipWriter } from "./zipWriter";
 import { IMG } from "./images";
 
 // Root-level project files, imported as raw text at build time.
@@ -14,8 +14,10 @@ const sourceModules = import.meta.glob("../../src/**/*.{ts,tsx,css}", {
   eager: true,
 }) as Record<string, string>;
 
-const README = `MERIDIAN CARRIERS — landing page source (self-contained archive)
-=================================================================
+const encoder = new TextEncoder();
+
+const README = `MERIDIAN CARRIERS — landing page source (single-file archive)
+==============================================================
 
 Stack: React 18 + TypeScript + Vite 6 + Tailwind CSS 4 + Framer Motion
 
@@ -27,15 +29,25 @@ Run it:
 What's inside:
   package.json, index.html, vite.config.js, tsconfig.json
   src/               all components, motion library, styles
-  public/img/        generated imagery (embedded, works offline)
+  public/img/        generated imagery (embedded when reachable at
+                     download time — otherwise src/lib/images.ts keeps
+                     the hosted URLs and everything still works online)
 
 Append ?zip to the site URL at any time to re-download this archive.
 `;
 
-interface Progress {
+export interface ZipProgress {
   step: string;
   done: number;
   total: number;
+}
+
+export interface ZipResult {
+  url: string;
+  fileName: string;
+  embeddedImages: number;
+  skippedImages: number;
+  sizeKB: number;
 }
 
 function collectSourceFiles(): Array<{ path: string; content: string }> {
@@ -55,71 +67,103 @@ function collectSourceFiles(): Array<{ path: string; content: string }> {
   return files;
 }
 
-/** Fetch a remote image and add it to the zip. Skipped silently on failure. */
-async function embedImage(
-  zip: JSZip,
-  name: string,
-  url: string
-): Promise<boolean> {
+async function fetchBinary(
+  url: string,
+  timeoutMs = 3500
+): Promise<ArrayBuffer | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timer);
-    if (!res.ok) return false;
-    const buffer = await res.arrayBuffer();
-    zip.file(`public/img/${name}.png`, buffer);
-    return true;
+    if (!res.ok) return null;
+    return await res.arrayBuffer();
   } catch {
-    return false;
+    return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
 export async function buildSourceZip(
-  onProgress?: (p: Progress) => void
-): Promise<Blob> {
-  const zip = new JSZip();
-  const root = zip.folder("meridian-carriers");
-  if (!root) throw new Error("Could not create zip folder");
-
+  onProgress?: (p: ZipProgress) => void
+): Promise<{ blob: Blob; embeddedImages: number; skippedImages: number }> {
+  const zip = new ZipWriter();
   const files = collectSourceFiles();
-  const imageEntries = Object.entries(IMG);
-  const total = files.length + imageEntries.length + 1;
+  const total = files.length + 2;
 
   let done = 0;
   for (const file of files) {
-    root.file(file.path, file.content);
+    await zip.addFile(
+      `meridian-carriers/${file.path}`,
+      encoder.encode(file.content)
+    );
     done += 1;
-    onProgress?.({ step: `Packing ${file.path}`, done, total });
+    onProgress?.({ step: `Packed ${file.path}`, done, total });
   }
 
-  for (const [name, url] of imageEntries) {
-    await embedImage(root, name, url);
-    done += 1;
-    onProgress?.({ step: `Embedding ${name}.png`, done, total });
-  }
-
-  onProgress?.({ step: "Compressing…", done: total - 1, total });
-  const blob = await zip.generateAsync(
-    { type: "blob", compression: "DEFLATE", compressionOptions: { level: 7 } },
-    (meta) => {
-      onProgress?.({ step: "Compressing…", done: total, total: Math.max(total, 100) });
-      void meta;
-    }
+  // Imagery: fetch everything in parallel with a hard per-image timeout,
+  // then embed whatever arrived. Never blocks or fails the archive.
+  onProgress?.({ step: "Fetching imagery…", done, total });
+  const imageEntries = Object.entries(IMG);
+  const fetched = await Promise.all(
+    imageEntries.map(async ([name, url]) => ({
+      name,
+      buffer: await fetchBinary(url),
+    }))
   );
-  return blob;
+
+  let embeddedImages = 0;
+  for (const img of fetched) {
+    if (img.buffer) {
+      await zip.addFile(
+        `meridian-carriers/public/img/${img.name}.png`,
+        new Uint8Array(img.buffer)
+      );
+      embeddedImages += 1;
+    }
+  }
+  const skippedImages = imageEntries.length - embeddedImages;
+
+  done += 1;
+  onProgress?.({
+    step:
+      skippedImages > 0
+        ? `Embedded ${embeddedImages} images (${skippedImages} unreachable — skipped)`
+        : `Embedded ${embeddedImages} images`,
+    done,
+    total,
+  });
+
+  onProgress?.({ step: "Compressing archive…", done: total, total });
+  const blob = zip.build();
+  return { blob, embeddedImages, skippedImages };
 }
 
 export async function downloadSourceZip(
-  onProgress?: (p: Progress) => void
-): Promise<void> {
-  const blob = await buildSourceZip(onProgress);
+  onProgress?: (p: ZipProgress) => void
+): Promise<ZipResult> {
+  const { blob, embeddedImages, skippedImages } =
+    await buildSourceZip(onProgress);
+  const fileName = "meridian-carriers-source.zip";
   const url = URL.createObjectURL(blob);
+
   const a = document.createElement("a");
   a.href = url;
-  a.download = "meridian-carriers-source.zip";
+  a.download = fileName;
+  a.rel = "noopener";
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+
+  // Keep the URL alive long enough for large saves to finish (and for the
+  // manual fallback link in the UI to remain usable).
+  setTimeout(() => URL.revokeObjectURL(url), 120_000);
+
+  return {
+    url,
+    fileName,
+    embeddedImages,
+    skippedImages,
+    sizeKB: Math.max(1, Math.round(blob.size / 1024)),
+  };
 }

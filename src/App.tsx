@@ -1,5 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
+import { downloadSourceZip } from "./lib/sourceZip";
 import Preloader from "./components/Preloader";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -19,9 +20,9 @@ export default function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.has("zip")) {
-      import("./lib/sourceZip")
-        .then((m) => m.downloadSourceZip())
-        .catch((err: unknown) => console.error("Zip failed:", err));
+      downloadSourceZip().catch((err: unknown) =>
+        console.error("Zip failed:", err)
+      );
       params.delete("zip");
       const next = params.toString();
       window.history.replaceState(
